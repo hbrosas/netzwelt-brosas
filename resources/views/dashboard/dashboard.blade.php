@@ -20,5 +20,5 @@
 
 
 @section('scripts')
-<script src="{{ secure_assets('js/dashboard.js') }}"></script>
+<script src="{{ secure_asset('js/dashboard.js') }}"></script>
 @endsection
