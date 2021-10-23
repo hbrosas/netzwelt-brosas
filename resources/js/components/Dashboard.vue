@@ -9,7 +9,25 @@
                     </div>
 
                     <div class="territories-container">
-
+                        <div class="accordion">
+                            <div class="accordion-item" v-for="territory in nestedTerritories" :key="territory.id">
+                                <h2 class="accordion-header" v-if="hasProperty(territory, 'children')">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#territory-'+territory.id">
+                                        {{ territory.name }}
+                                    </button>
+                                </h2>
+                                <h2 class="accordion-header" v-else>
+                                    <button class="accordion-no-body">
+                                        {{ territory.name }}
+                                    </button>
+                                </h2>
+                                <div :id="'territory-'+territory.id" class="accordion-collapse collapse" v-if="hasProperty(territory, 'children')">
+                                    <div class="accordion-body">
+                                        <territory :territory="territory"></territory>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -19,11 +37,18 @@
 </template>
 
 <script>
-export default {
+import Territory from './Territory.vue';
+
+export default 
+{
+    components: {
+        'territory': Territory
+    },
     data() {
         return {
-            base_url: 'https://netzwelt-devtest.azurewebsites.net/Territories/All',
-            territories: []
+            base_url: '/get/territories',
+            territories: [],
+            nestedTerritories: []
         }
     },
     mounted: function() {
@@ -33,39 +58,39 @@ export default {
     methods: {
         async fetchData() {
             var __this = this;
-            axios.get(__this.base_url, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
-                }
-            })
+            axios.get(__this.base_url)
             .then(res => {
-                console.log(res);
+                __this.territories = res.data.data;
+            })
+            .finally(() => {
+                __this.nestedTerritories = __this.populateTerritories(__this.territories, null);
             });
+        },
 
-            // try {
-            //     const url = __this.base_url
-            //     const response = await axios.get(url)
-                
-            //     const results = response.data.results
+        populateTerritories(arr, parent) {
+            var __this = this;
+            var out = []
 
-            //     console.log(results);
+            for(var i in arr) {
+                if(arr[i].parent == parent) {
+                    var children = __this.populateTerritories(arr, arr[i].id)
 
-            //     } catch (err) {
-            //         if (err.response) {
-            //         // client received an error response (5xx, 4xx)
-            //         console.log("Server Error:", err)
-            //         } else if (err.request) {
-            //         // client never received a response, or request never left
-            //         console.log("Network Error:", err)
-            //         } else {
-            //         console.log("Client Error:", err)
-            //         }
-            //     }
+                    if(children.length) {
+                        arr[i].children = children;
+                    }
+
+                    out.push(arr[i])
+                }
             }
+            return out;
+        },
+
+        hasProperty(obj, property) {
+            if(obj.hasOwnProperty(property)) return true;
+            else return false;
         }
-    };
+    }
+};
 </script>
 
 <style scoped>
@@ -79,5 +104,20 @@ export default {
 
     .logout-btn {
         float: right;
+    }
+
+    .territories-container {
+        max-height: 60vh;
+        overflow: scroll;
+    }
+
+    .accordion-no-body {
+        font-size: 1rem;
+        padding: 1rem 1.25rem;
+        background-color: white;
+        color: black;
+        width: 100%;
+        text-align: left;
+        border: none;
     }
 </style>

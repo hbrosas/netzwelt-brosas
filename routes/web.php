@@ -20,3 +20,5 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard');
 });
+
+Route::get('/get/territories', 'App\Http\Controllers\DashboardController@getTerritories')->name('get.territories');
