@@ -31,7 +31,10 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-secondary mt-3 logout-btn">Log Out</button>
+            <form method="GET" action="/account/logout">
+                <button type="submit" class="btn btn-secondary mt-3 logout-btn">Log Out</button>
+                <input type="hidden" name="_token" id="token" :value="csrf">
+            </form>
         </div>
     </div>
 </template>
@@ -48,7 +51,8 @@ export default
         return {
             base_url: '/get/territories',
             territories: [],
-            nestedTerritories: []
+            nestedTerritories: [],
+            csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     },
     mounted: function() {

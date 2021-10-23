@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -1756,6 +1756,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -1765,7 +1768,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       base_url: '/get/territories',
       territories: [],
-      nestedTerritories: []
+      nestedTerritories: [],
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
   mounted: function mounted() {
@@ -17446,14 +17450,21 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-secondary mt-3 logout-btn",
-          attrs: { type: "submit" }
-        },
-        [_vm._v("Log Out")]
-      )
+      _c("form", { attrs: { method: "GET", action: "/account/logout" } }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-secondary mt-3 logout-btn",
+            attrs: { type: "submit" }
+          },
+          [_vm._v("Log Out")]
+        ),
+        _vm._v(" "),
+        _c("input", {
+          attrs: { type: "hidden", name: "_token", id: "token" },
+          domProps: { value: _vm.csrf }
+        })
+      ])
     ])
   ])
 }
@@ -51656,7 +51667,7 @@ var app = new Vue({
 
 /***/ }),
 
-/***/ 2:
+/***/ 1:
 /*!*****************************************!*\
   !*** multi ./resources/js/dashboard.js ***!
   \*****************************************/
